@@ -194,9 +194,9 @@ class DescriptiveDetails:
     
  
     def get_date_details(self):
-        self._df =self._df.filter(F.col('DateOfBirth')!='9999-12-31')
-        self._df =self._df.filter(F.col('LatestDate')!='9999-12-31' )
-        self._df =self._df.filter(F.col('FirstDate')!='9999-12-31' )
+        # self._df =self._df.filter(F.col('DateOfBirth')!='9999-12-31')
+        # self._df =self._df.filter(F.col('LatestDate')!='9999-12-31' )
+        # self._df =self._df.filter(F.col('FirstDate')!='9999-12-31' )
         
         schema = StructType([
             StructField("column_name", StringType(), True),
@@ -215,10 +215,14 @@ class DescriptiveDetails:
         if len(dt_cols) == 0:
             return date_df
         for col in dt_cols:
-            min_date = self._df.agg(F.min(col)).collect()[0][0]
-            max_date = self._df.agg(F.max(col)).collect()[0][0]
-    
+
+            #date col filtering  
             date_value_df=self._df.select(col)
+            date_value_df =data_value_df.filter(F.col(col)!='9999-12-31' )
+        
+            min_date = date_value_df.agg(F.min(col)).collect()[0][0]
+            max_date = date_value_df.agg(F.max(col)).collect()[0][0]
+    
             date_value_df=date_value_df.withColumnRenamed(col,'value')
             date_value_df=date_value_df.withColumn('value',date_format(F.col('value'),'MM-yyyy'))
             date_value_df=date_value_df.groupBy('value').count()
