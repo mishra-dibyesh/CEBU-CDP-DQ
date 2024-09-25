@@ -25,7 +25,8 @@ class DescriptiveDetails:
     def read_data(self, df: DataFrame) -> None:
         """Load data into the class """
         self._df = df
-        self._df  = self._df.withColumn("DateOfBirth", to_date(df["DateOfBirth"], "yyyy-MM-dd").cast(DateType()))
+        if "DateOfBirth" in self._df.columns:
+            self._df  = self._df.withColumn("DateOfBirth", to_date(df["DateOfBirth"], "yyyy-MM-dd").cast(DateType()))
         self._df  = self._df.withColumn("LatestDate", to_date(to_timestamp(col("LatestDate"), "yyyy-MM-dd HH:mm:ss[.SSS]")))
         self._df  = self._df.withColumn("FirstDate", to_date(to_timestamp(col("FirstDate"), "yyyy-MM-dd HH:mm:ss[.SSS]")))
 
